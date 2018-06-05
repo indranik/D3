@@ -3,8 +3,8 @@
 // Students:
 // =========
 // Follow your written instructions and create a scatter plot with D3.js.
-var svgWidth = 960;
-var svgHeight = 500;
+var svgWidth = 700;
+var svgHeight = 400;
 
 var margin = {
   top: 20,
@@ -26,24 +26,25 @@ var chartGroup = svg.append("g")
   .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
 // Import Data
-d3.csv("hairData.csv", function (err, hairData) {
+d3.csv("/Data/PovertyHealthCoverage.csv", function (err, demoData) {
   if (err) throw err;
 
   // Step 1: Parse Data/Cast as numbers
    // ==============================
-  hairData.forEach(function (data) {
-    data.hair_length = +data.hair_length;
-    data.num_hits = +data.num_hits;
+   demoData.forEach(function (data) {
+    data.stateAbbr = data.abbr
+    data.poverty = +data.poverty;
+    data.healthCare = +data.healthCare;
   });
 
   // Step 2: Create scale functions
   // ==============================
   var xLinearScale = d3.scaleLinear()
-    .domain([20, d3.max(hairData, d => d.hair_length)])
-    .range([0, width]);
+    .domain([0, d3.max(demoData, d => d.poverty)])
+    .range([20, width]);
 
   var yLinearScale = d3.scaleLinear()
-    .domain([0, d3.max(hairData, d => d.num_hits)])
+    .domain([0, d3.max(demoData, d => d.healthCare)])
     .range([height, 0]);
 
   // Step 3: Create axis functions
@@ -63,11 +64,11 @@ d3.csv("hairData.csv", function (err, hairData) {
    // Step 5: Create Circles
   // ==============================
   var circlesGroup = chartGroup.selectAll("circle")
-  .data(hairData)
+  .data(demoData)
   .enter()
   .append("circle")
-  .attr("cx", d => xLinearScale(d.hair_length))
-  .attr("cy", d => yLinearScale(d.num_hits))
+  .attr("cx", d => xLinearScale(d.poverty))
+  .attr("cy", d => yLinearScale(d.healthCare))
   .attr("r", "15")
   .attr("fill", "pink")
   .attr("opacity", ".5")
@@ -78,7 +79,7 @@ d3.csv("hairData.csv", function (err, hairData) {
     .attr("class", "tooltip")
     .offset([80, -60])
     .html(function (d) {
-      return (`${d.rockband}<br>Hair length: ${d.hair_length}<br>Hits: ${d.num_hits}`);
+      return (`${d.state}<br>% Poverty: ${d.poverty}<br> % Lack Health Care: ${d.healthCare}`);
     });
 
   // Step 7: Create tooltip in the chart
@@ -102,10 +103,10 @@ d3.csv("hairData.csv", function (err, hairData) {
     .attr("x", 0 - (height / 2))
     .attr("dy", "1em")
     .attr("class", "axisText")
-    .text("Number of Billboard 100 Hits");
+    .text("% of Population lacking Health Care");
 
   chartGroup.append("text")
     .attr("transform", `translate(${width/2}, ${height + margin.top + 30})`)
     .attr("class", "axisText")
-    .text("Hair Metal Band Hair Length (inches)");
+    .text("% of Population below Poverty line");
 });
