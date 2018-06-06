@@ -3,7 +3,7 @@
 // Students:
 // =========
 // Follow your written instructions and create a scatter plot with D3.js.
-var svgWidth = 700;
+var svgWidth = 800;
 var svgHeight = 400;
 
 var margin = {
@@ -40,11 +40,11 @@ d3.csv("/Data/PovertyHealthCoverage.csv", function (err, demoData) {
   // Step 2: Create scale functions
   // ==============================
   var xLinearScale = d3.scaleLinear()
-    .domain([0, d3.max(demoData, d => d.poverty)])
-    .range([20, width]);
+    .domain([d3.min(demoData, d => d.poverty)-1,d3.max(demoData, d => d.poverty)])
+    .range([0, width]);
 
   var yLinearScale = d3.scaleLinear()
-    .domain([0, d3.max(demoData, d => d.healthCare)])
+    .domain([d3.min(demoData, d => d.healthCare)-1, d3.max(demoData, d => d.healthCare)])
     .range([height, 0]);
 
   // Step 3: Create axis functions
@@ -69,9 +69,23 @@ d3.csv("/Data/PovertyHealthCoverage.csv", function (err, demoData) {
   .append("circle")
   .attr("cx", d => xLinearScale(d.poverty))
   .attr("cy", d => yLinearScale(d.healthCare))
-  .attr("r", "15")
-  .attr("fill", "pink")
+  .attr("r", "8")
+  .attr("fill", "blue")
   .attr("opacity", ".5")
+ 
+  var lalelsize = 8;
+
+  var labelsGroup = chartGroup.selectAll("txtlbls")
+  .data(demoData)
+  .enter()
+  .append("text")
+  .attr("text-anchor", "middle")
+  .attr("font-size",lalelsize)
+  .attr("x", d => xLinearScale(d.poverty))
+  .attr("y", d => yLinearScale(d.healthCare)+4)
+  .text(d => d.stateAbbr)
+  .attr("fill", "white")
+  
 
   // Step 6: Initialize tool tip
   // ==============================
@@ -79,7 +93,7 @@ d3.csv("/Data/PovertyHealthCoverage.csv", function (err, demoData) {
     .attr("class", "tooltip")
     .offset([80, -60])
     .html(function (d) {
-      return (`${d.state}<br>% Poverty: ${d.poverty}<br> % Lack Health Care: ${d.healthCare}`);
+      return (`${d.state}<br>Poverty: ${d.poverty}%<br>Lack Health Care: ${d.healthCare}% `);
     });
 
   // Step 7: Create tooltip in the chart
