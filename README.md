@@ -6,4 +6,5 @@ Is there a correlation between poverty rate and health care coverage? In order a
 
 Data Sources:
 2014 American Community Survey (ACS) 1-year estimates
+
 Behavioral Risk	Factor Surveillance System (BRFSS) 2014 data
